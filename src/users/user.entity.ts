@@ -36,6 +36,6 @@ export class User {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @OneToMany('Post', 'seller')
+  @OneToMany('Product', 'seller')
   posts: any[];
 }

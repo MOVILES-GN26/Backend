@@ -1,17 +1,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Post } from './post.entity';
+import { Product } from './product.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { StorageService } from '../storage/storage.service';
 import { TrendingService } from '../trending/trending.service';
 
 @Injectable()
-export class PostsService {
+export class ProductsService {
   constructor(
-    @InjectRepository(Post)
-    private readonly postsRepo: Repository<Post>,
+    @InjectRepository(Product)
+    private readonly postsRepo: Repository<Product>,
     private readonly storageService: StorageService,
     private readonly trendingService: TrendingService,
   ) {}

@@ -10,8 +10,8 @@ import {
 import { PostCondition } from '../common/constants/conditions';
 import { User } from '../users/user.entity';
 
-@Entity('posts')
-export class Post {
+@Entity('products')
+export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
