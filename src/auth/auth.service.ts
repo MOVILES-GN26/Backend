@@ -75,7 +75,7 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(
         { sub: userId, email, type: 'access' },
-        { expiresIn: '1h' },
+        { expiresIn: '24h' },
       ),
       refresh_token: this.jwtService.sign(
         { sub: userId, email, type: 'refresh' },

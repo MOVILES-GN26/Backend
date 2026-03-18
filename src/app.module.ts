@@ -10,8 +10,10 @@ import { StorageModule } from './storage/storage.module';
 import { TokenModule } from './token/token.module';
 import { HomeModule } from './home/home.module';
 import { HealthModule } from './health/health.module';
+import { TrendingModule } from './trending/trending.module';
 import { User } from './users/user.entity';
 import { Post } from './posts/post.entity';
+import { CategorySearch } from './trending/category-search.entity';
 
 @Module({
   imports: [
@@ -26,7 +28,7 @@ import { Post } from './posts/post.entity';
         username: config.get<string>('DB_USERNAME', 'postgres'),
         password: config.get<string>('DB_PASSWORD', 'postgres'),
         database: config.get<string>('DB_NAME', 'andeshub'),
-        entities: [User, Post],
+        entities: [User, Post, CategorySearch],
         synchronize: config.get<string>('NODE_ENV') !== 'production',
       }),
     }),
@@ -38,6 +40,7 @@ import { Post } from './posts/post.entity';
     TokenModule,
     HomeModule,
     HealthModule,
+    TrendingModule,
   ],
   providers: [
     {

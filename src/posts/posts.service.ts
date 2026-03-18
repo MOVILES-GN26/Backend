@@ -5,6 +5,7 @@ import { Post } from './post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { StorageService } from '../storage/storage.service';
+import { TrendingService } from '../trending/trending.service';
 
 @Injectable()
 export class PostsService {
@@ -12,6 +13,7 @@ export class PostsService {
     @InjectRepository(Post)
     private readonly postsRepo: Repository<Post>,
     private readonly storageService: StorageService,
+    private readonly trendingService: TrendingService,
   ) {}
 
   async create(
@@ -60,6 +62,7 @@ export class PostsService {
 
     if (query.category) {
       qb.andWhere('post.category = :category', { category: query.category });
+      this.trendingService.recordSearch(query.category);
     }
 
     if (query.condition) {
