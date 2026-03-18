@@ -5,6 +5,7 @@ import {
   PutObjectCommand,
   CreateBucketCommand,
   HeadBucketCommand,
+  PutBucketPolicyCommand,
 } from '@aws-sdk/client-s3';
 import { v4 as uuid } from 'uuid';
 import * as path from 'path';
@@ -47,7 +48,29 @@ export class StorageService implements OnModuleInit {
           `Could not create bucket "${this.bucket}": ${err}. ` +
           'Storage will fail until MinIO is available.',
         );
+        return;
       }
+    }
+
+    // Make the bucket publicly readable.
+    const policy = JSON.stringify({
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Effect: 'Allow',
+          Principal: { AWS: ['*'] },
+          Action: ['s3:GetObject'],
+          Resource: [`arn:aws:s3:::${this.bucket}/*`],
+        },
+      ],
+    });
+
+    try {
+      await this.s3.send(
+        new PutBucketPolicyCommand({ Bucket: this.bucket, Policy: policy }),
+      );
+    } catch (err) {
+      this.logger.warn(`Could not set public policy on bucket: ${err}`);
     }
   }
 

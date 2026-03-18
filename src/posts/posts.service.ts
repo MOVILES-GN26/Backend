@@ -89,12 +89,14 @@ export class PostsService {
         condition: post.condition,
         image_urls: post.image_urls,
         created_at: post.created_at,
-        seller: {
-          id: post.seller.id,
-          name: `${post.seller.first_name} ${post.seller.last_name}`,
-          major: post.seller.major,
-          avatar_url: post.seller.avatar_url,
-        },
+        seller: post.seller
+          ? {
+              id: post.seller.id,
+              name: `${post.seller.first_name} ${post.seller.last_name}`,
+              major: post.seller.major,
+              avatar_url: post.seller.avatar_url,
+            }
+          : null,
       })),
     };
   }
