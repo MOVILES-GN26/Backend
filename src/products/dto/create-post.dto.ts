@@ -2,6 +2,8 @@ import {
   IsEnum,
   IsNotEmpty,
   IsString,
+  IsUUID,
+  IsOptional,
   Matches,
   MaxLength,
   MinLength,
@@ -35,10 +37,15 @@ export class CreatePostDto {
   @Matches(/^\d+(\.\d{1,2})?$/, {
     message: 'price must be a valid positive number (e.g. 45000 or 45000.50)',
   })
-  price: string; // arrives as string from multipart, parsed server-side
+  price: string;
 
   @IsEnum(PostCondition, {
     message: 'condition must be one of: New, Like New, Good, Fair',
   })
   condition: PostCondition;
+
+  // 👇 esto es lo nuevo
+  @IsUUID()
+  @IsOptional()
+  store_id?: string;
 }

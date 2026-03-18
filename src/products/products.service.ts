@@ -43,6 +43,7 @@ export class ProductsService {
       condition: dto.condition,
       image_urls: imageUrls,
       seller_id: sellerId,
+      store_id: dto.store_id ?? null,
     });
 
     return this.postsRepo.save(post);
