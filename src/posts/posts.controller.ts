@@ -11,6 +11,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OptionalJwtGuard } from '../common/guards/optional-jwt.guard';
 import { PostsService } from './posts.service';
@@ -31,6 +32,7 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(
     FilesInterceptor('images', 10, {
+      storage: memoryStorage(),
       limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
       fileFilter: (_req, file, cb) => {
         if (!file.mimetype.startsWith('image/')) {
