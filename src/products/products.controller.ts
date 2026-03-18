@@ -12,17 +12,19 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { SkipThrottle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OptionalJwtGuard } from '../common/guards/optional-jwt.guard';
-import { PostsService } from './posts.service';
+import { ProductsService } from './products.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { QueryProductsDto } from './dto/query-products.dto';
 
 @Controller()
-export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+export class ProductsController {
+  constructor(private readonly postsService: ProductsService) {}
 
   @Get('products')
+  @SkipThrottle()
   @UseGuards(OptionalJwtGuard)
   getProducts(@Query() query: QueryProductsDto) {
     return this.postsService.findProducts(query);

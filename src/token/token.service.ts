@@ -33,7 +33,7 @@ export class TokenService {
       return {
         access_token: this.jwtService.sign(
           { sub: user.id, email: user.email, type: 'access' },
-          { expiresIn: '1h' },
+          { expiresIn: '24h' },
         ),
         refresh_token: this.jwtService.sign(
           { sub: user.id, email: user.email, type: 'refresh' },
