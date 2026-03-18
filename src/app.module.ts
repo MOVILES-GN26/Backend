@@ -15,6 +15,7 @@ import { User } from './users/user.entity';
 import { Product } from './products/product.entity';
 import { CategorySearch } from './trending/category-search.entity';
 import { StoreModule } from './store/store.module';
+import { Store } from './store/entities/store.entity';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { StoreModule } from './store/store.module';
         username: config.get<string>('DB_USERNAME', 'postgres'),
         password: config.get<string>('DB_PASSWORD', 'postgres'),
         database: config.get<string>('DB_NAME', 'andeshub'),
-        entities: [User, Product, CategorySearch],
+        entities: [User, Product, CategorySearch, Store],
         synchronize: config.get<string>('NODE_ENV') !== 'production',
       }),
     }),
