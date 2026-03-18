@@ -14,6 +14,7 @@ import { TrendingModule } from './trending/trending.module';
 import { User } from './users/user.entity';
 import { Product } from './products/product.entity';
 import { CategorySearch } from './trending/category-search.entity';
+import { StoreModule } from './store/store.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { CategorySearch } from './trending/category-search.entity';
     HomeModule,
     HealthModule,
     TrendingModule,
+    StoreModule,
   ],
   providers: [
     {

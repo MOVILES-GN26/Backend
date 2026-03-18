@@ -38,4 +38,7 @@ export class User {
 
   @OneToMany('Product', 'seller')
   posts: any[];
+
+  @OneToMany('Store', 'owner')
+  stores: any[];
 }

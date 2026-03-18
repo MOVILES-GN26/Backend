@@ -39,9 +39,17 @@ export class Product {
   @Column({ type: 'uuid' })
   seller_id: string;
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'seller_id' })
   seller: User;
+
+  @Column({ type: 'uuid', nullable: true })
+  store_id: string | null;
+
+  @ManyToOne('Store', 'products', { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'store_id' })
+  store: any;
 
   @CreateDateColumn()
   created_at: Date;
