@@ -44,7 +44,6 @@ export class CreatePostDto {
   })
   condition: PostCondition;
 
-  // 👇 esto es lo nuevo
   @IsUUID()
   @IsOptional()
   store_id?: string;

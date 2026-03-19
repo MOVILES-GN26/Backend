@@ -40,4 +40,7 @@ export class Store {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @Column({ type: 'varchar', nullable: true })
+  logo_url: string | null;
 }

@@ -8,7 +8,11 @@ import {
   Delete,
   UseGuards,
   Req,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
@@ -20,9 +24,25 @@ export class StoreController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(@Body() dto: CreateStoreDto, @Req() req: any) {
+  @UseInterceptors(
+    FileInterceptor('logo', {
+      storage: memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+      fileFilter: (_req, file, cb) => {
+        if (!file.mimetype.startsWith('image/')) {
+          return cb(new Error('Only image files are allowed.'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  create(
+    @Body() dto: CreateStoreDto,
+    @UploadedFile() logo: Express.Multer.File,
+    @Req() req: any,
+  ) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return this.storeService.create(dto, req.user.id as string);
+    return this.storeService.create(dto, req.user.id as string, logo);
   }
 
   @Get()
@@ -44,13 +64,26 @@ export class StoreController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('logo', {
+      storage: memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+      fileFilter: (_req, file, cb) => {
+        if (!file.mimetype.startsWith('image/')) {
+          return cb(new Error('Only image files are allowed.'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
   update(
     @Param('id') id: string,
     @Body() dto: UpdateStoreDto,
+    @UploadedFile() logo: Express.Multer.File,
     @Req() req: any,
   ) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return this.storeService.update(id, dto, req.user.id as string);
+    return this.storeService.update(id, dto, req.user.id as string, logo);
   }
 
   @Delete(':id')
