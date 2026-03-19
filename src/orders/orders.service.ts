@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Order } from './orders.entity';
+import { Order, DeliveryOption } from './orders.entity';
 import { Product } from '../products/product.entity';
 import { StorageService } from '../storage/storage.service';
 
@@ -15,7 +15,7 @@ export class OrdersService {
     private readonly storage: StorageService,
   ) {}
 
-  async create(buyerId: string, productId: string, quantity = 1, deliveryOption?: string) {
+  async create(buyerId: string, productId: string, quantity = 1, deliveryOption?: DeliveryOption) {
     const product = await this.productsRepo.findOne({ where: { id: productId } });
     if (!product) throw new NotFoundException('Product not found');
 
@@ -27,7 +27,7 @@ export class OrdersService {
       product_id: product.id,
       quantity,
       total,
-      delivery_option: deliveryOption ?? null,
+      delivery_option: (deliveryOption ?? null) as DeliveryOption | null,
     });
 
     return this.ordersRepo.save(order);
