@@ -14,8 +14,10 @@ import { TrendingModule } from './trending/trending.module';
 import { User } from './users/user.entity';
 import { Product } from './products/product.entity';
 import { CategorySearch } from './trending/category-search.entity';
+import { Order } from './orders/orders.entity';
 import { StoreModule } from './store/store.module';
 import { Store } from './store/entities/store.entity';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -30,13 +32,14 @@ import { Store } from './store/entities/store.entity';
         username: config.get<string>('DB_USERNAME', 'postgres'),
         password: config.get<string>('DB_PASSWORD', 'postgres'),
         database: config.get<string>('DB_NAME', 'andeshub'),
-        entities: [User, Product, CategorySearch, Store],
+        entities: [User, Product, CategorySearch, Store, Order],
         synchronize: config.get<string>('NODE_ENV') !== 'production',
       }),
     }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]),
     AuthModule,
     UsersModule,
+    OrdersModule,
     ProductsModule,
     StorageModule,
     TokenModule,
