@@ -8,26 +8,32 @@ import { Repository } from 'typeorm';
 import { Store } from './entities/store.entity';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable()
 export class StoreService {
   constructor(
     @InjectRepository(Store)
     private readonly storeRepo: Repository<Store>,
+    private readonly storageService: StorageService,
   ) {}
 
-  async create(dto: CreateStoreDto, ownerId: string): Promise<Store> {
+  async create(
+    dto: CreateStoreDto,
+    ownerId: string,
+    logo?: Express.Multer.File,
+  ): Promise<Store> {
+    const logo_url = logo ? await this.storageService.uploadFile(logo) : null;
     const store = this.storeRepo.create({
       ...dto,
       owner_id: ownerId,
+      logo_url,
     });
     return await this.storeRepo.save(store);
   }
 
   async findAll(): Promise<Store[]> {
-    return await this.storeRepo.find({
-      relations: ['owner'],
-    });
+    return await this.storeRepo.find({ relations: ['owner'] });
   }
 
   async findOne(id: string): Promise<Store> {
@@ -50,9 +56,13 @@ export class StoreService {
     id: string,
     dto: UpdateStoreDto,
     ownerId: string,
+    logo?: Express.Multer.File,
   ): Promise<Store> {
     const store = await this.findOne(id);
     if (store.owner_id !== ownerId) throw new ForbiddenException();
+    if (logo) {
+      store.logo_url = await this.storageService.uploadFile(logo);
+    }
     Object.assign(store, dto);
     return await this.storeRepo.save(store);
   }
