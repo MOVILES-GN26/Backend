@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './product.entity';
@@ -178,5 +182,15 @@ export class ProductsService {
 
   async getProductStats(productId: string) {
     return this.interactionsService.getStats(productId);
+  }
+
+  async getFavoritesCount(productId: string): Promise<{ count: number }> {
+    const product = await this.postsRepo.findOne({
+      where: { id: productId },
+      relations: ['favoritedBy'],
+    });
+    if (!product)
+      throw new NotFoundException(`Product #${productId} not found`);
+    return { count: product.favoritedBy.length };
   }
 }
