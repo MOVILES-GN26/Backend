@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 @Entity('users')
@@ -41,4 +43,8 @@ export class User {
 
   @OneToMany('Store', 'owner')
   stores: any[];
+
+  @ManyToMany('Product', 'favoritedBy')
+  @JoinTable({ name: 'favorites' })
+  favorites: any[];
 }
