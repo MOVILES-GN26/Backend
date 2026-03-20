@@ -24,6 +24,23 @@ import { QueryProductsDto } from './dto/query-products.dto';
 export class ProductsController {
   constructor(private readonly postsService: ProductsService) {}
 
+  @Get('products/:id')
+  @UseGuards(OptionalJwtGuard)
+  async getProductById(@Param('id') id: string, @Req() req: any) {
+    const userId: string | null = req.user ? req.user.id : null;
+    const product = await this.postsService.findProductById(id, userId);
+    if (!product) {
+      return { error: 'Product not found' };
+    }
+    return product;
+  }
+
+  @Get('products/:id/stats')
+  @SkipThrottle()
+  async getProductStats(@Param('id') id: string) {
+    return this.postsService.getProductStats(id);
+  }
+
   @Get('products')
   @SkipThrottle()
   @UseGuards(OptionalJwtGuard)
