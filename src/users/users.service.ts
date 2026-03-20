@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -67,5 +69,25 @@ export class UsersService {
     });
     if (!user) throw new NotFoundException('User not found');
     return user.favorites;
+  }
+
+  async updateProfile(userId: string, dto: UpdateProfileDto): Promise<User> {
+    const user = await this.usersRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    if (dto.first_name) user.first_name = dto.first_name;
+    if (dto.last_name) user.last_name = dto.last_name;
+    if (dto.major) user.major = dto.major;
+    if (dto.password) user.password = await bcrypt.hash(dto.password, 10);
+
+    return this.usersRepo.save(user);
+  }
+
+  async updateAvatar(userId: string, avatarUrl: string): Promise<User> {
+    const user = await this.usersRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    user.avatar_url = avatarUrl;
+    return this.usersRepo.save(user);
   }
 }
