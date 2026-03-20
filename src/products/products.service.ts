@@ -11,6 +11,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { StorageService } from '../storage/storage.service';
 import { TrendingService } from '../trending/trending.service';
+import { InteractionsService } from '../interactions/interactions.service';
 
 @Injectable()
 export class ProductsService {
@@ -19,6 +20,7 @@ export class ProductsService {
     private readonly postsRepo: Repository<Product>,
     private readonly storageService: StorageService,
     private readonly trendingService: TrendingService,
+    private readonly interactionsService: InteractionsService,
   ) {}
 
   async create(
@@ -139,6 +141,48 @@ export class ProductsService {
           : null,
       })),
     };
+  }
+
+  async findProductById(productId: string, viewerId: string | null) {
+    const post = await this.postsRepo
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.seller', 'seller')
+      .where('post.id = :productId', { productId })
+      .getOne();
+
+    if (!post) return null;
+
+    // record interaction (fire-and-forget)
+    try {
+      const sellerId = post.seller ? post.seller.id : null;
+      this.interactionsService.recordView(viewerId, post.id, sellerId);
+    } catch {
+      // ignore
+    }
+
+    return {
+      id: post.id,
+      title: post.title,
+      description: post.description,
+      category: post.category,
+      building_location: post.building_location,
+      price: Number(post.price),
+      condition: post.condition,
+      image_urls: post.image_urls,
+      created_at: post.created_at,
+      seller: post.seller
+        ? {
+            id: post.seller.id,
+            name: `${post.seller.first_name} ${post.seller.last_name}`,
+            major: post.seller.major,
+            avatar_url: post.seller.avatar_url,
+          }
+        : null,
+    };
+  }
+
+  async getProductStats(productId: string) {
+    return this.interactionsService.getStats(productId);
   }
 
   async deleteProduct(productId: string, requesterId: string): Promise<void> {

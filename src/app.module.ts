@@ -14,6 +14,8 @@ import { TrendingModule } from './trending/trending.module';
 import { User } from './users/user.entity';
 import { Product } from './products/product.entity';
 import { CategorySearch } from './trending/category-search.entity';
+import { Interaction } from './interactions/interaction.entity';
+import { InteractionsModule } from './interactions/interactions.module';
 import { Order } from './orders/orders.entity';
 import { StoreModule } from './store/store.module';
 import { Store } from './store/entities/store.entity';
@@ -32,7 +34,7 @@ import { OrdersModule } from './orders/orders.module';
         username: config.get<string>('DB_USERNAME', 'postgres'),
         password: config.get<string>('DB_PASSWORD', 'postgres'),
         database: config.get<string>('DB_NAME', 'andeshub'),
-        entities: [User, Product, CategorySearch, Store, Order],
+        entities: [User, Product, CategorySearch, Store, Order, Interaction],
         synchronize: config.get<string>('NODE_ENV') !== 'production',
       }),
     }),
@@ -46,6 +48,7 @@ import { OrdersModule } from './orders/orders.module';
     HomeModule,
     HealthModule,
     TrendingModule,
+    InteractionsModule,
     StoreModule,
   ],
   providers: [
