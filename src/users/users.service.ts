@@ -63,7 +63,7 @@ export class UsersService {
   async getFavorites(userId: string): Promise<any[]> {
     const user = await this.usersRepo.findOne({
       where: { id: userId },
-      relations: ['favorites'],
+      relations: ['favorites', 'favorites.seller'],
     });
     if (!user) throw new NotFoundException('User not found');
     return user.favorites;

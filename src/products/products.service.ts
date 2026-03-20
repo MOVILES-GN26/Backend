@@ -106,10 +106,12 @@ export class ProductsService {
   }
 
   async findProductsBySeller(sellerId: string) {
-    const posts = await this.postsRepo.find({
-      where: { seller_id: sellerId },
-      order: { created_at: 'DESC' },
-    });
+    const posts = await this.postsRepo
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.seller', 'seller') // ← agrega esto
+      .where('post.seller_id = :sellerId', { sellerId })
+      .orderBy('post.created_at', 'DESC')
+      .getMany();
 
     return {
       items: posts.map((post) => ({
@@ -122,7 +124,14 @@ export class ProductsService {
         condition: post.condition,
         image_urls: post.image_urls,
         created_at: post.created_at,
-        seller_id: post.seller_id,
+        seller: post.seller
+          ? {
+              id: post.seller.id,
+              name: `${post.seller.first_name} ${post.seller.last_name}`,
+              major: post.seller.major,
+              avatar_url: post.seller.avatar_url,
+            }
+          : null,
       })),
     };
   }
