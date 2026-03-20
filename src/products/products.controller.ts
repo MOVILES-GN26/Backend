@@ -81,9 +81,8 @@ export class ProductsController {
   getProductsByUser(@Param('userId') userId: string) {
     return this.postsService.findProductsBySeller(userId);
   }
-  @Get(':id/favorites/count')
+  @Get('products/:id/favorites/count')
   getFavoritesCount(@Param('id') productId: string) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.postsService.getFavoritesCount(productId);
   }
 }
