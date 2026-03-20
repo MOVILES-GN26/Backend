@@ -104,4 +104,26 @@ export class ProductsService {
       })),
     };
   }
+
+  async findProductsBySeller(sellerId: string) {
+    const posts = await this.postsRepo.find({
+      where: { seller_id: sellerId },
+      order: { created_at: 'DESC' },
+    });
+
+    return {
+      items: posts.map((post) => ({
+        id: post.id,
+        title: post.title,
+        description: post.description,
+        category: post.category,
+        building_location: post.building_location,
+        price: Number(post.price),
+        condition: post.condition,
+        image_urls: post.image_urls,
+        created_at: post.created_at,
+        seller_id: post.seller_id,
+      })),
+    };
+  }
 }

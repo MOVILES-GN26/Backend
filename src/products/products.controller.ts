@@ -9,6 +9,7 @@ import {
   UploadedFiles,
   Req,
   BadRequestException,
+  Param,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -54,5 +55,11 @@ export class ProductsController {
   ) {
     const sellerId: string = req.user.id;
     return this.postsService.create(dto, sellerId, files);
+  }
+
+  @Get('users/:userId/products')
+  @UseGuards(JwtAuthGuard)
+  getProductsByUser(@Param('userId') userId: string) {
+    return this.postsService.findProductsBySeller(userId);
   }
 }
