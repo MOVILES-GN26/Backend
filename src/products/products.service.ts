@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './product.entity';
@@ -134,5 +139,19 @@ export class ProductsService {
           : null,
       })),
     };
+  }
+
+  async deleteProduct(productId: string, requesterId: string): Promise<void> {
+    const post = await this.postsRepo.findOne({ where: { id: productId } });
+
+    if (!post) {
+      throw new NotFoundException('Product not found');
+    }
+
+    if (post.seller_id !== requesterId) {
+      throw new ForbiddenException('You can only delete your own products');
+    }
+
+    await this.postsRepo.remove(post);
   }
 }
