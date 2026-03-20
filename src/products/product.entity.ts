@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  ManyToMany,
 } from 'typeorm';
 import { PostCondition } from '../common/constants/conditions';
 import { User } from '../users/user.entity';
@@ -56,4 +57,7 @@ export class Product {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @ManyToMany('User', 'favorites')
+  favoritedBy: any[];
 }

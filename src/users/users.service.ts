@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -29,5 +29,43 @@ export class UsersService {
   async create(data: Partial<User>): Promise<User> {
     const user = this.usersRepo.create(data);
     return this.usersRepo.save(user);
+  }
+
+  async addFavorite(userId: string, productId: string): Promise<void> {
+    const user = await this.usersRepo.findOne({
+      where: { id: userId },
+      relations: ['favorites'],
+    });
+    if (!user) throw new NotFoundException('User not found');
+
+    const alreadyFavorited = user.favorites.some(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      (p: any) => p.id === productId,
+    );
+    if (!alreadyFavorited) {
+      user.favorites.push({ id: productId } as any);
+      await this.usersRepo.save(user);
+    }
+  }
+
+  async removeFavorite(userId: string, productId: string): Promise<void> {
+    const user = await this.usersRepo.findOne({
+      where: { id: userId },
+      relations: ['favorites'],
+    });
+    if (!user) throw new NotFoundException('User not found');
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    user.favorites = user.favorites.filter((p: any) => p.id !== productId);
+    await this.usersRepo.save(user);
+  }
+
+  async getFavorites(userId: string): Promise<any[]> {
+    const user = await this.usersRepo.findOne({
+      where: { id: userId },
+      relations: ['favorites'],
+    });
+    if (!user) throw new NotFoundException('User not found');
+    return user.favorites;
   }
 }
