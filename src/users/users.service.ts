@@ -66,6 +66,39 @@ export class UsersService {
       relations: ['favorites', 'favorites.seller'],
     });
     if (!user) throw new NotFoundException('User not found');
-    return user.favorites;
+
+    return user.favorites.map((product: any) => ({
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      id: product.id,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      title: product.title,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      description: product.description,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      category: product.category,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      building_location: product.building_location,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      price: Number(product.price),
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      condition: product.condition,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      image_urls: product.image_urls,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      created_at: product.created_at,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      seller: product.seller
+        ? {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+            id: product.seller.id,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            name: `${product.seller.first_name} ${product.seller.last_name}`,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+            major: product.seller.major,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+            avatar_url: product.seller.avatar_url,
+          }
+        : null,
+    }));
   }
 }
