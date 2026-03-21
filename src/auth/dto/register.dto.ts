@@ -6,6 +6,8 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  IsOptional,
+  IsPhoneNumber,
 } from 'class-validator';
 import { ALLOWED_MAJORS } from '../../common/constants/majors';
 
@@ -44,4 +46,12 @@ export class RegisterDto {
     message: 'Password must contain at least 1 uppercase letter and 1 digit',
   })
   password: string;
+
+  @IsString()
+  @Matches(/^\d{7,20}$/, { message: 'phone_number must be numeric between 7 and 20 digits' })
+  phone_number: string;
+
+  @IsOptional()
+  @Matches(/^\d+$/, { message: 'account_number must be numeric' })
+  account_number?: string;
 }

@@ -31,6 +31,8 @@ export class AuthService {
       last_name: dto.last_name,
       major: dto.major,
       password: hashedPassword,
+      phone_number: dto.phone_number,
+      account_number: dto.account_number ?? null,
     });
 
     const tokens = this.generateTokens(user.id, user.email);
