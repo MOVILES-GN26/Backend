@@ -185,6 +185,16 @@ export class ProductsService {
     return this.interactionsService.getStats(productId);
   }
 
+  async getFavoritesCount(productId: string): Promise<{ count: number }> {
+    const product = await this.postsRepo.findOne({
+      where: { id: productId },
+      relations: ['favoritedBy'],
+    });
+    if (!product)
+      throw new NotFoundException(`Product #${productId} not found`);
+    return { count: product.favoritedBy.length };
+  }
+
   async deleteProduct(productId: string, requesterId: string): Promise<void> {
     const post = await this.postsRepo.findOne({ where: { id: productId } });
 

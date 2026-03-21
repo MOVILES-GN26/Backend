@@ -28,6 +28,7 @@ export class ProductsController {
   @Get('products/:id')
   @UseGuards(OptionalJwtGuard)
   async getProductById(@Param('id') id: string, @Req() req: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const userId: string | null = req.user ? req.user.id : null;
     const product = await this.postsService.findProductById(id, userId);
     if (!product) {
@@ -71,6 +72,7 @@ export class ProductsController {
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: any,
   ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const sellerId: string = req.user.id;
     return this.postsService.create(dto, sellerId, files);
   }
@@ -79,6 +81,10 @@ export class ProductsController {
   @UseGuards(JwtAuthGuard)
   getProductsByUser(@Param('userId') userId: string) {
     return this.postsService.findProductsBySeller(userId);
+  }
+  @Get('products/:id/favorites/count')
+  getFavoritesCount(@Param('id') productId: string) {
+    return this.postsService.getFavoritesCount(productId);
   }
 
   @Delete('posts/:id')
