@@ -20,6 +20,8 @@ import { ProductsService } from './products.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { Delete } from '@nestjs/common';
+import { Res } from '@nestjs/common';
+import { Response } from 'express';
 
 @Controller()
 export class ProductsController {
@@ -93,5 +95,42 @@ export class ProductsController {
     const requesterId: string = req.user.id;
     await this.postsService.deleteProduct(id, requesterId);
     return { message: 'Product deleted successfully' };
+  }
+
+  /**
+   * Redirects (or returns) a WhatsApp deep-link for contacting the seller of a product.
+   * Defaults to redirect; provide `?redirect=false` to get JSON { url } instead.
+   */
+  @Get('products/:id/contact-whatsapp')
+  @SkipThrottle()
+  @UseGuards(OptionalJwtGuard)
+  async contactWhatsapp(
+    @Param('id') id: string,
+    @Query('redirect') redirect: string,
+    @Req() req: any,
+    @Res() res: Response,
+  ) {
+    const userId: string | null = req.user ? req.user.id : null;
+    const product = await this.postsService.findProductById(id, userId);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    const seller = product.seller;
+    const phoneRaw = seller?.phone_number ?? null;
+    if (!phoneRaw) {
+      return res.status(404).json({ error: 'Seller phone number not available' });
+    }
+
+    // Normalize phone: remove non-digits
+    const phone = String(phoneRaw).replace(/\D/g, '');
+    const text = `Hola, estoy interesado en tu producto "${product.title}" (id: ${product.id}). ¿Está disponible?`;
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+
+    if (redirect !== 'false') {
+      return res.redirect(url);
+    }
+
+    return res.json({ url });
   }
 }
