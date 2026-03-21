@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -192,5 +193,13 @@ export class ProductsService {
     if (!product)
       throw new NotFoundException(`Product #${productId} not found`);
     return { count: product.favoritedBy.length };
+  }
+
+  async deleteProduct(productId: string, userId: string): Promise<void> {
+    const product = await this.postsRepo.findOne({ where: { id: productId } });
+    if (!product) throw new NotFoundException('Product not found');
+    if (product.seller_id !== userId)
+      throw new ForbiddenException('You can only delete your own products');
+    await this.postsRepo.remove(product);
   }
 }

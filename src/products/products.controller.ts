@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Delete,
   Body,
   Query,
   UseGuards,
@@ -10,6 +11,7 @@ import {
   Req,
   BadRequestException,
   Param,
+  HttpCode,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -84,5 +86,14 @@ export class ProductsController {
   @Get('products/:id/favorites/count')
   getFavoritesCount(@Param('id') productId: string) {
     return this.postsService.getFavoritesCount(productId);
+  }
+
+  @Delete('products/:id')
+  @HttpCode(204)
+  @UseGuards(JwtAuthGuard)
+  deleteProduct(@Param('id') id: string, @Req() req: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const userId: string = req.user.id;
+    return this.postsService.deleteProduct(id, userId);
   }
 }
