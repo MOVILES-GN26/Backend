@@ -45,6 +45,7 @@ export class AuthService {
         first_name: user.first_name,
         last_name: user.last_name,
         major: user.major,
+        phone_number: user.phone_number,
       },
     };
   }
@@ -70,6 +71,7 @@ export class AuthService {
         first_name: user.first_name,
         last_name: user.last_name,
         major: user.major,
+        phone_number: user.phone_number,
       },
     };
   }
@@ -102,6 +104,7 @@ export class AuthService {
         first_name: user.first_name,
         last_name: user.last_name,
         major: user.major,
+        phone_number: user.phone_number,
       },
     };
   }
