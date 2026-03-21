@@ -21,7 +21,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { Delete } from '@nestjs/common';
 import { Res } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 
 @Controller()
 export class ProductsController {
