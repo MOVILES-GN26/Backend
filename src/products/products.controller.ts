@@ -21,7 +21,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { Delete } from '@nestjs/common';
 import { Res } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 
 @Controller()
 export class ProductsController {
@@ -117,7 +117,7 @@ export class ProductsController {
     }
 
     const seller = product.seller;
-    const phoneRaw = seller?.phone_number ?? null;
+    const phoneRaw = (seller as any)?.phone_number ?? null;
     if (!phoneRaw) {
       return res.status(404).json({ error: 'Seller phone number not available' });
     }
