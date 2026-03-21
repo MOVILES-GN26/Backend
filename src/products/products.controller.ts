@@ -19,6 +19,7 @@ import { OptionalJwtGuard } from '../common/guards/optional-jwt.guard';
 import { ProductsService } from './products.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { QueryProductsDto } from './dto/query-products.dto';
+import { Delete } from '@nestjs/common';
 
 @Controller()
 export class ProductsController {
@@ -84,5 +85,13 @@ export class ProductsController {
   @Get('products/:id/favorites/count')
   getFavoritesCount(@Param('id') productId: string) {
     return this.postsService.getFavoritesCount(productId);
+  }
+
+  @Delete('posts/:id')
+  @UseGuards(JwtAuthGuard)
+  async deletePost(@Param('id') id: string, @Req() req: any) {
+    const requesterId: string = req.user.id;
+    await this.postsService.deleteProduct(id, requesterId);
+    return { message: 'Product deleted successfully' };
   }
 }

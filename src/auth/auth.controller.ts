@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { NfcLoginDto } from './dto/nfc-login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -24,5 +25,10 @@ export class AuthController {
   forgotPassword(@Body() _dto: ForgotPasswordDto) {
     // Placeholder — integrate email service later
     return { message: 'If that email exists, a reset link has been sent.' };
+  }
+  @Post('nfc-login')
+  @HttpCode(200)
+  nfcLogin(@Body() dto: NfcLoginDto) {
+    return this.authService.nfcLogin(dto.userId);
   }
 }
