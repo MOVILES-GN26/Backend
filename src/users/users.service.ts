@@ -111,6 +111,8 @@ export class UsersService {
     if (dto.first_name) user.first_name = dto.first_name;
     if (dto.last_name) user.last_name = dto.last_name;
     if (dto.major) user.major = dto.major;
+    if (dto.phone_number) user.phone_number = dto.phone_number;
+    if (dto.account_number) user.account_number = dto.account_number;
     if (dto.password) user.password = await bcrypt.hash(dto.password, 10);
 
     return this.usersRepo.save(user);

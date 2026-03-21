@@ -32,8 +32,8 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   avatar_url: string;
 
-  @Column({ type: 'varchar', length: 20 })
-  phone_number: string;
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  phone_number: string | null;
 
   @Column({ type: 'varchar', length: 30, nullable: true })
   account_number: string | null;
