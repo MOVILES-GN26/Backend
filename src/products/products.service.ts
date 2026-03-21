@@ -106,6 +106,7 @@ export class ProductsService {
               name: `${post.seller.first_name} ${post.seller.last_name}`,
               major: post.seller.major,
               avatar_url: post.seller.avatar_url,
+              phone_number: post.seller.phone_number,
             }
           : null,
       })),
@@ -137,6 +138,7 @@ export class ProductsService {
               name: `${post.seller.first_name} ${post.seller.last_name}`,
               major: post.seller.major,
               avatar_url: post.seller.avatar_url,
+              phone_number: post.seller.phone_number,
             }
           : null,
       })),
