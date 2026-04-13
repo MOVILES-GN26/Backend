@@ -20,6 +20,7 @@ import { Order } from './orders/orders.entity';
 import { StoreModule } from './store/store.module';
 import { Store } from './store/entities/store.entity';
 import { OrdersModule } from './orders/orders.module';
+import { LoginMetric } from './auth/entities/login-metric.entity';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { OrdersModule } from './orders/orders.module';
         username: config.get<string>('DB_USERNAME', 'postgres'),
         password: config.get<string>('DB_PASSWORD', 'postgres'),
         database: config.get<string>('DB_NAME', 'andeshub'),
-        entities: [User, Product, CategorySearch, Store, Order, Interaction],
+        entities: [User, Product, CategorySearch, Store, Order, Interaction, LoginMetric],
         synchronize: config.get<string>('NODE_ENV') !== 'production',
       }),
     }),

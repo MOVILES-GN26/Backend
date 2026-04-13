@@ -9,12 +9,14 @@ import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { NotFoundException } from '@nestjs/common';
+import { LoginMetricsService } from './login-metrics.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly loginMetricsService: LoginMetricsService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -60,6 +62,9 @@ export class AuthService {
     if (!passwordValid) {
       throw new UnauthorizedException('Incorrect email or password.');
     }
+
+    const loginType = dto.login_type ?? 'email-password';
+    await this.loginMetricsService.record(user.email, loginType);
 
     const tokens = this.generateTokens(user.id, user.email);
 
