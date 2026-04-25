@@ -6,6 +6,7 @@ import {
   Request,
   Param,
   Get,
+  Query,
   UploadedFile,
   UseInterceptors,
   BadRequestException,
@@ -26,6 +27,14 @@ export class OrdersController {
     const userId = req.user?.id;
     if (!userId) throw new BadRequestException('Missing user');
     return this.ordersService.create(userId, dto.product_id, dto.quantity, dto.delivery_option);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getByProduct(@Request() req: any, @Query('product_id') productId: string) {
+    const sellerId = req.user?.id;
+    if (!productId) throw new BadRequestException('product_id query param is required');
+    return this.ordersService.findByProduct(productId, sellerId);
   }
 
   @UseGuards(JwtAuthGuard)
