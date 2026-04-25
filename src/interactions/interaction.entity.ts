@@ -16,4 +16,10 @@ export class Interaction {
 
   @CreateDateColumn()
   viewed_at: Date;
+
+  @Column({ type: 'boolean', nullable: true })
+  was_favorited: boolean | null;
+
+  @Column({ type: 'boolean', default: false })
+  is_purchase: boolean;
 }

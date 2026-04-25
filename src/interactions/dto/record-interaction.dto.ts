@@ -7,4 +7,5 @@ export class RecordInteractionDto {
   @IsOptional()
   @IsString()
   seller_id?: string;
+  was_favorited?: boolean;
 }

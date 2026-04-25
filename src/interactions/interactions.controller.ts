@@ -20,10 +20,24 @@ export class InteractionsController {
     return { ok: true };
   }
 
+  @Post('purchase')
+  @UseGuards(OptionalJwtGuard)
+  recordPurchase(@Body() dto: RecordInteractionDto, @Req() req: any) {
+    const userId: string | null = req.user ? req.user.id : null;
+    this.interactionsService.recordPurchase(userId, dto.product_id, dto.was_favorited ?? false);
+    return { ok: true };
+  }
+
   /** Return aggregated stats for a product */
   @Get('product/:id/stats')
   @SkipThrottle()
   getProductStats(@Param('id') productId: string) {
     return this.interactionsService.getStats(productId);
+  }
+
+  @Get('purchase-from-favorite/stats')
+  @SkipThrottle()
+  getPurchaseFromFavoriteStats() {
+    return this.interactionsService.getPurchaseFromFavoriteStats();
   }
 }
