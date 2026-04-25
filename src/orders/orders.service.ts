@@ -60,6 +60,14 @@ export class OrdersService {
     return this.ordersRepo.save(order);
   }
 
+  async findByProduct(productId: string, sellerId: string) {
+    const product = await this.productsRepo.findOne({ where: { id: productId } });
+    if (!product) throw new NotFoundException('Product not found');
+    if (product.seller_id !== sellerId) throw new ForbiddenException('Not seller of this product');
+
+    return this.ordersRepo.find({ where: { product_id: productId } });
+  }
+
   async setDeliveryDetails(orderId: string, userId: string, details: string) {
     const order = await this.ordersRepo.findOne({ where: { id: orderId } });
     if (!order) throw new NotFoundException('Order not found');
