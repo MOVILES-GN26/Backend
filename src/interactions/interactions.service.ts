@@ -18,6 +18,16 @@ export class InteractionsService {
     });
   }
 
+  recordPurchase(userId: string | null, productId: string, wasFavorited: boolean): void {
+    const rec = this.repo.create({ 
+      user_id: userId ?? null, 
+      product_id: productId,
+      is_purchase: true,
+      was_favorited: wasFavorited
+    });
+    this.repo.save(rec).catch(() => {});
+  }
+
   /** Return views count, last viewed timestamp and last user id for a product */
   async getStats(productId: string): Promise<{ views: number; last_viewed: Date | null; last_user_id: string | null }> {
     const stats = await this.repo
@@ -39,6 +49,21 @@ export class InteractionsService {
       views: Number(stats?.views ?? 0),
       last_viewed: stats?.last_viewed ?? null,
       last_user_id: lastUser?.user_id ?? null,
+    };
+  }
+
+  async getPurchaseFromFavoriteStats(): Promise<{ 
+    total_purchases: number; 
+    purchases_from_favorites: number; 
+    percentage: number 
+  }> {
+    const total = await this.repo.count({ where: { is_purchase: true } });
+    const fromFavorites = await this.repo.count({ where: { is_purchase: true, was_favorited: true } });
+
+    return {
+      total_purchases: total,
+      purchases_from_favorites: fromFavorites,
+      percentage: total > 0 ? Math.round((fromFavorites / total) * 100) : 0
     };
   }
 }
