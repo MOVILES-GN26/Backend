@@ -17,6 +17,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { CategorySearch } from './trending/category-search.entity';
 import { Interaction } from './interactions/interaction.entity';
 import { ProductVisit } from './analytics/entities/product-visit.entity';
+import { BuyerSellerContact } from './analytics/entities/buyer-seller-contact.entity';
 import { InteractionsModule } from './interactions/interactions.module';
 import { Order } from './orders/orders.entity';
 import { StoreModule } from './store/store.module';
@@ -37,7 +38,7 @@ import { LoginMetric } from './auth/entities/login-metric.entity';
         username: config.get<string>('DB_USERNAME', 'postgres'),
         password: config.get<string>('DB_PASSWORD', 'postgres'),
         database: config.get<string>('DB_NAME', 'andeshub'),
-        entities: [User, Product, CategorySearch, Store, Order, Interaction, LoginMetric, ProductVisit],
+        entities: [User, Product, CategorySearch, Store, Order, Interaction, LoginMetric, ProductVisit, BuyerSellerContact],
         synchronize: config.get<string>('NODE_ENV') !== 'production',
       }),
     }),
