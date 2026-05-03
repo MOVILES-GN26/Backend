@@ -10,6 +10,7 @@ import {
   Body,
   UseInterceptors,
   UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UsersService } from './users.service';
@@ -24,6 +25,12 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly storageService: StorageService,
   ) {}
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  getMe(@Req() req: Request & { user: { id: string } }) {
+    return this.usersService.getMe(req.user.id);
+  }
 
   @Get('me/favorites')
   @UseGuards(JwtAuthGuard)
@@ -70,6 +77,9 @@ export class UsersController {
     @Req() req: Request & { user: { id: string } },
     @UploadedFile() file: Express.Multer.File,
   ) {
+    if (!file) {
+      throw new BadRequestException('No image file provided');
+    }
     const avatarUrl = await this.storageService.uploadFile(file);
     return this.usersService.updateAvatar(req.user.id, avatarUrl);
   }

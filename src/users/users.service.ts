@@ -118,6 +118,12 @@ export class UsersService {
     return this.usersRepo.save(user);
   }
 
+  async getMe(userId: string): Promise<User> {
+    const user = await this.usersRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
+
   async updateAvatar(userId: string, avatarUrl: string): Promise<User> {
     const user = await this.usersRepo.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
