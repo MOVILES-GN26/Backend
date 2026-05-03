@@ -40,4 +40,10 @@ export class InteractionsController {
   getPurchaseFromFavoriteStats() {
     return this.interactionsService.getPurchaseFromFavoriteStats();
   }
+
+  @Get('top-categories/week')
+  @SkipThrottle()
+  getTopCategoriesThisWeek() {
+    return this.interactionsService.getTopCategoriesThisWeek();
+  }
 }
