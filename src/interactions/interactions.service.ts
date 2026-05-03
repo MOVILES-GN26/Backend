@@ -66,4 +66,25 @@ export class InteractionsService {
       percentage: total > 0 ? Math.round((fromFavorites / total) * 100) : 0
     };
   }
+
+  async getTopCategoriesThisWeek(): Promise<{ category: string; purchases: number }[]> {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    const result = await this.repo.manager.query(`
+        SELECT p.category, COUNT(*) as purchases
+        FROM interactions i
+        JOIN products p ON p.id::text = i.product_id::text
+        WHERE i.is_purchase = true
+        AND i.viewed_at >= $1
+        GROUP BY p.category
+        ORDER BY purchases DESC
+        LIMIT 3
+    `, [oneWeekAgo]);
+
+    return result.map((r: any) => ({
+        category: r.category,
+        purchases: Number(r.purchases)
+    }));
+  }
 }
