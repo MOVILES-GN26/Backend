@@ -39,7 +39,7 @@ import { LoginMetric } from './auth/entities/login-metric.entity';
         password: config.get<string>('DB_PASSWORD', 'postgres'),
         database: config.get<string>('DB_NAME', 'andeshub'),
         entities: [User, Product, CategorySearch, Store, Order, Interaction, LoginMetric, ProductVisit, BuyerSellerContact],
-        synchronize: config.get<string>('NODE_ENV') !== 'production',
+        synchronize: true,
       }),
     }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]),
