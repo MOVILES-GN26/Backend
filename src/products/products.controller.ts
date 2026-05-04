@@ -27,6 +27,13 @@ import type { Response } from 'express';
 export class ProductsController {
   constructor(private readonly postsService: ProductsService) {}
 
+  @Get('products/recommended')
+  @UseGuards(JwtAuthGuard)
+  async getRecommended(@Req() req: any) {
+    const userId: string = req.user.id;
+    return this.postsService.getRecommended(userId);
+  }
+
   @Get('products/:id')
   @UseGuards(OptionalJwtGuard)
   async getProductById(@Param('id') id: string, @Req() req: any) {

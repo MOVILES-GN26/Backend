@@ -192,6 +192,66 @@ export class ProductsService {
     return this.interactionsService.getStats(productId);
   }
 
+  async getRecommended(userId: string): Promise<{ items: any[] }> {
+    // 1. Load the user's viewed_categories map
+    const userRow = await this.postsRepo.manager
+      .createQueryBuilder()
+      .select('u.viewed_categories', 'viewed_categories')
+      .from('users', 'u')
+      .where('u.id = :userId', { userId })
+      .getRawOne<{ viewed_categories: Record<string, number> | null }>();
+
+    const map = userRow?.viewed_categories ?? {};
+    const topCategories = Object.entries(map)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([cat]) => cat);
+
+    if (topCategories.length === 0) {
+      return { items: [] };
+    }
+
+    // 2. Fetch products in those categories, excluding own listings
+    const posts = await this.postsRepo
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.seller', 'seller')
+      .where('post.is_sold = false')
+      .andWhere('post.seller_id != :userId', { userId })
+      .andWhere('post.category IN (:...categories)', { categories: topCategories })
+      .getMany();
+
+    // 3. Sort: by category rank first, then created_at DESC within group
+    const categoryRank = new Map(topCategories.map((cat, i) => [cat, i]));
+    posts.sort((a, b) => {
+      const rankA = categoryRank.get(a.category) ?? 999;
+      const rankB = categoryRank.get(b.category) ?? 999;
+      if (rankA !== rankB) return rankA - rankB;
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+
+    const limited = posts.slice(0, 30);
+
+    return {
+      items: limited.map((post) => ({
+        id: post.id,
+        title: post.title,
+        description: post.description,
+        category: post.category,
+        building_location: post.building_location,
+        price: Number(post.price),
+        condition: post.condition,
+        image_urls: post.image_urls,
+        is_sold: post.is_sold,
+        seller_id: post.seller_id,
+        seller_name: post.seller ? `${post.seller.first_name} ${post.seller.last_name}` : null,
+        seller_major: post.seller?.major ?? null,
+        seller_avatar_url: post.seller?.avatar_url ?? null,
+        seller_phone: post.seller?.phone_number ?? null,
+        created_at: post.created_at,
+      })),
+    };
+  }
+
   async getFavoritesCount(productId: string): Promise<{ count: number }> {
     const product = await this.postsRepo.findOne({
       where: { id: productId },

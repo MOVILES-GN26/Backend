@@ -33,6 +33,18 @@ export class UsersService {
     return this.usersRepo.save(user);
   }
 
+  async incrementViewedCategory(userId: string, category: string): Promise<void> {
+    await this.usersRepo
+      .createQueryBuilder()
+      .update(User)
+      .set({
+        viewed_categories: () =>
+          `COALESCE(viewed_categories, '{}') || jsonb_build_object('${category.replace(/'/g, "''")}', (COALESCE((viewed_categories->>'${category.replace(/'/g, "''")}')::int, 0) + 1))`,
+      })
+      .where('id = :userId', { userId })
+      .execute();
+  }
+
   async addFavorite(userId: string, productId: string): Promise<void> {
     const user = await this.usersRepo.findOne({
       where: { id: userId },

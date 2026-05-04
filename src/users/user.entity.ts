@@ -38,6 +38,9 @@ export class User {
   @Column({ type: 'varchar', length: 30, nullable: true })
   account_number: string | null;
 
+  @Column({ type: 'jsonb', nullable: true, default: () => "'{}'", name: 'viewed_categories' })
+  viewed_categories: Record<string, number>;
+
   @CreateDateColumn()
   created_at: Date;
 

@@ -1,12 +1,30 @@
 import { Controller, Post, Body, UseGuards, Req, Get, Param } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 import { OptionalJwtGuard } from '../common/guards/optional-jwt.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { InteractionsService } from './interactions.service';
 import { RecordInteractionDto } from './dto/record-interaction.dto';
+import { RecordViewedCategoryDto } from './dto/record-viewed-category.dto';
+import { UsersService } from '../users/users.service';
 
 @Controller('interactions')
 export class InteractionsController {
-  constructor(private readonly interactionsService: InteractionsService) {}
+  constructor(
+    private readonly interactionsService: InteractionsService,
+    private readonly usersService: UsersService,
+  ) {}
+
+  /**
+   * Track which category an authenticated user browsed.
+   * Increments the viewed_categories counter map on the User entity.
+   */
+  @Post('viewed-category')
+  @UseGuards(JwtAuthGuard)
+  async recordViewedCategory(@Body() dto: RecordViewedCategoryDto, @Req() req: any) {
+    const userId: string = req.user.id;
+    await this.usersService.incrementViewedCategory(userId, dto.category);
+    return { ok: true };
+  }
 
   /**
    * Record a view coming from the client. JWT optional — anonymous views allowed.
