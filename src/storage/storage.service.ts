@@ -18,10 +18,9 @@ export class StorageService implements OnModuleInit {
 
   constructor(private readonly config: ConfigService) {
     this.bucket = this.config.get<string>('MINIO_BUCKET', 'andeshub');
-    this.publicUrl = this.config.get<string>(
-      'MINIO_PUBLIC_URL',
-      'http://localhost:9000',
-    );
+    this.publicUrl = this.config.get<string>('MINIO_PUBLIC_URL', 'http://localhost:9000')
+      // Strip trailing slash so URLs are always clean
+      .replace(/\/$/, '');
 
     this.s3 = new S3Client({
       endpoint: this.config.get<string>('MINIO_ENDPOINT', 'http://localhost:9000'),
