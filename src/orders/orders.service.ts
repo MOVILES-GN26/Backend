@@ -47,8 +47,12 @@ export class OrdersService {
     const url = await this.storage.uploadFile(file);
     order.payment_proof_url = url;
     order.status = 'payment_uploaded';
+    await this.ordersRepo.save(order);
 
-    return this.ordersRepo.save(order);
+    // Mark product as sold so it no longer appears in listings
+    await this.productsRepo.update(order.product_id, { is_sold: true });
+
+    return order;
   }
 
   async confirmPayment(orderId: string, sellerId: string) {

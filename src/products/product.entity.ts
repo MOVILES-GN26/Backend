@@ -48,6 +48,9 @@ export class Product {
   @Column({ type: 'uuid', nullable: true })
   store_id: string | null;
 
+  @Column({ type: 'boolean', default: false })
+  is_sold: boolean;
+
   @ManyToOne('Store', 'products', { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'store_id' })
   store: any;

@@ -59,7 +59,8 @@ export class ProductsService {
   async findProducts(query: QueryProductsDto) {
     const qb = this.postsRepo
       .createQueryBuilder('post')
-      .leftJoinAndSelect('post.seller', 'seller');
+      .leftJoinAndSelect('post.seller', 'seller')
+      .andWhere('post.is_sold = false');
 
     if (query.search) {
       qb.andWhere(
