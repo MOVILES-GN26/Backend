@@ -100,6 +100,7 @@ export class ProductsService {
         price: Number(post.price),
         condition: post.condition,
         image_urls: post.image_urls,
+        is_sold: post.is_sold,
         created_at: post.created_at,
         seller: post.seller
           ? {
@@ -132,6 +133,7 @@ export class ProductsService {
         price: Number(post.price),
         condition: post.condition,
         image_urls: post.image_urls,
+        is_sold: post.is_sold,
         created_at: post.created_at,
         seller: post.seller
           ? {
@@ -172,6 +174,7 @@ export class ProductsService {
       price: Number(post.price),
       condition: post.condition,
       image_urls: post.image_urls,
+      is_sold: post.is_sold,
       created_at: post.created_at,
       seller: post.seller
         ? {
